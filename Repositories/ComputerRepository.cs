@@ -1,11 +1,16 @@
 using LabManager.Models;
+using LabManager.Database;
 using Microsoft.Data.Sqlite;
 
 namespace LabManager.Repositories;
 
 class ComputerRepository
 {
-    public List<Computer> GettAll()
+    private DatabaseConfig databaseConfig;
+    
+    public ComputerRepository(DatabaseConfig databaseConfig) => this.databaseConfig = databaseConfig;
+
+    public  List<Computer> GetAll()
     {
         var computers = new List<Computer>();
 
@@ -14,15 +19,13 @@ class ComputerRepository
 
         var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM Computers;";
-
-
+    
         var reader = command.ExecuteReader();
         while(reader.Read())
         {
             var computer = new Computer(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
             computers.Add(computer);
         }
-
         reader.Close();
         connection.Close();
 
