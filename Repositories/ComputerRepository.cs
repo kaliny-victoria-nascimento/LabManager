@@ -32,7 +32,7 @@ class ComputerRepository
         return computers;
     }
 
-    public Computer GetById(int id)
+    public Computer GetById (int id)
     {
         var connection = new SqliteConnection(_databaseConfig.ConnectionString);
         connection.Open();
