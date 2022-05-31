@@ -7,7 +7,6 @@ namespace LabManager.Repositories;
 class ComputerRepository
 {
     private DatabaseConfig databaseConfig;
-    
     public ComputerRepository(DatabaseConfig databaseConfig) => this.databaseConfig = databaseConfig;
 
     public  List<Computer> GetAll()
