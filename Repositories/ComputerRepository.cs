@@ -22,7 +22,7 @@ class ComputerRepository
         var reader = command.ExecuteReader();
         while(reader.Read())
         {
-            var computer = new Computer(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
+            var computer = readerToComputer(reader);
             computers.Add(computer);
         }
         reader.Close();
@@ -42,14 +42,30 @@ class ComputerRepository
 
         var reader = command.ExecuteReader();
         reader.Read();
-
-        id = reader.GetInt32(0);
-        var ram = reader.GetString(1);
-        var processor = reader.GetString(2);
-
-        var computer = new Computer(id, ram, processor);
+        var computer = readerToComputer(reader);
 
         connection.Close(); 
+
+        return computer;
+    }
+
+    public bool existsById(int id)
+    {
+        var connection = new SqliteConnection(databaseConfig.ConnectionString);
+        connection.Open();
+
+        var command = connection.CreateCommand();
+        command.CommandText = "SELECT count(id) FROM Computers WHERE (id = $id)";
+        command.Parameters.AddWithValue("$id", id);
+
+        bool result = Convert.ToBoolean(command.ExecuteScalar());
+
+        return result;
+    }
+
+    private Computer readerToComputer(SqliteDataReader reader)
+    {
+        var computer = new Computer(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
 
         return computer;
     }

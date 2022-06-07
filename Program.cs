@@ -36,9 +36,15 @@ if(modelName == "Computer")
     {
         var id = Convert.ToInt32(args[2]);
 
-        var computer = computerRepository.GetById(id);
+        if(computerRepository.existsById(id))
+        {
+            var computer = computerRepository.GetById(id);
+            Console.WriteLine("{0}, {1}, {2}", computer.Id, computer.Ram, computer.Processor);
+        } else {
+            Console.WriteLine($"O computador ${id} não existe");
+        }
+
         
-        Console.WriteLine("{0}, {1}, {2}", computer.Id, computer.Ram, computer.Processor);
     }
 
     if(modelAction == "Update")
