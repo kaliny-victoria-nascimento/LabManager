@@ -32,6 +32,7 @@ if(modelName == "Computer")
         var computer = new Computer(id, ram, processor);
         computerRepository.Save(computer);
     }
+
     if(modelAction == "Show")
     {
         var id = Convert.ToInt32(args[2]);
@@ -53,15 +54,25 @@ if(modelName == "Computer")
         string ram = args[3];
         string processor = args[4];
 
-        var computer = new Computer(id, ram, processor);
-
-        computerRepository.Update(computer);
+        if(computerRepository.existsById(id))
+        {
+           var computer = new Computer(id, ram, processor);
+           computerRepository.Update(computer); 
+        } else {
+            Console.WriteLine($"O computador {id} não existe.");
+        } 
     }
 
     if(modelAction == "Delete")
     {
         var id = Convert.ToInt32(args[2]);
-        computerRepository.Delete(id);
+        
+        if(computerRepository.existsById(id))
+        {
+            computerRepository.Delete(id);
+        } else {
+             Console.WriteLine($"O computador {id} não existe.");
+        }
     }
 }
 else if(modelName == "Lab")
