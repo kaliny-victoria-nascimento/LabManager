@@ -1,6 +1,8 @@
 using LabManager.Models;
 using LabManager.Database;
 using Microsoft.Data.Sqlite;
+using Dapper;
+
 
 namespace LabManager.Repositories;
 
@@ -9,24 +11,10 @@ class ComputerRepository
     private DatabaseConfig databaseConfig;
     public ComputerRepository(DatabaseConfig databaseConfig) => this.databaseConfig = databaseConfig;
 
-    public  List<Computer> GetAll()
+    public  IEnumerable<Computer> GetAll()
     {
-        var computers = new List<Computer>();
-
-        var connection = new SqliteConnection("Data Source=database.db");
-        connection.Open();
-
-        var command = connection.CreateCommand();
-        command.CommandText = "SELECT * FROM Computers;";
-    
-        var reader = command.ExecuteReader();
-        while(reader.Read())
-        {
-            var computer = readerToComputer(reader);
-            computers.Add(computer);
-        }
-        reader.Close();
-        connection.Close();
+        using var connection = new SqliteConnection("Data Source=database.db");
+        var computers = connection.Query<Computer>("SELECT * FROM Computers").ToList();
 
         return computers;
     }
@@ -75,13 +63,8 @@ class ComputerRepository
         var connection = new SqliteConnection(databaseConfig.ConnectionString);
         connection.Open();
 
-        var command = connection.CreateCommand();
-        command.CommandText = "INSERT INTO Computers VALUES($id, $ram, $processor)";
-        command.Parameters.AddWithValue("$id", computer.Id);
-        command.Parameters.AddWithValue("$ram", computer.Ram);
-        command.Parameters.AddWithValue("$processor", computer.Processor);
+        connection.Execute("INSERT INTO Computers VALUES(@id, @ram, @processor)", computer);
 
-        command.ExecuteNonQuery();
         connection.Close();
 
         return computer;
@@ -107,13 +90,9 @@ class ComputerRepository
     public void Delete(int id)
     {
         var connection = new SqliteConnection(databaseConfig.ConnectionString);
-        connection.Open();
 
-        var command = connection.CreateCommand();
-        command.CommandText = "DELETE FROM Computers WHERE (id = $id)";
-        command.Parameters.AddWithValue("$id", id);
+        connection.Execute("DELETE FROM Computers WHERE id = $id", new { Id = id });
 
-        command.ExecuteNonQuery();
-        connection.Close();
+
     }
 }
