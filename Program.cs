@@ -54,25 +54,14 @@ if(modelName == "Computer")
         string ram = args[3];
         string processor = args[4];
 
-        if(computerRepository.existsById(id))
-        {
-           var computer = new Computer(id, ram, processor);
-           computerRepository.Update(computer); 
-        } else {
-            Console.WriteLine($"O computador {id} não existe.");
-        } 
+        var computer = new Computer(id, ram, processor);
+        computerRepository.Update(computer); 
     }
 
     if(modelAction == "Delete")
     {
         var id = Convert.ToInt32(args[2]);
-        
-        if(computerRepository.existsById(id))
-        {
-            computerRepository.Delete(id);
-        } else {
-             Console.WriteLine($"O computador {id} não existe.");
-        }
+        computerRepository.Delete(id);
     }
 }
 else if(modelName == "Lab")
